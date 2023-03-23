@@ -1,1 +1,1 @@
--heapsize 25M -classpath /usr/sc-java-maven-starter-project-0.0.1-full.jar -emain com.example.ExampleMain
+-heapsize 25M -classpath /usr/sc-ewon-java-sam-code-test-1.0.0-full.jar -emain com.hms_networks.americas.sc.ewon_sam_code_tester.EwonSamCodeTesterMain
