@@ -1,6 +1,6 @@
-# Java Starter Project Changelog
+# Solution Center Ewon SAM Code Tester Project Changelog
 
-## Version 0.0.1
+## Version 1.0.0
 ### Features
 - Initial Release
 ### Bug Fixes

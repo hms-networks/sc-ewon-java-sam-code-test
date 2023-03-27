@@ -1,239 +1,201 @@
-# Solution Center Java Maven Starter Project (sc-java-maven-starter-project)
+# Solution Center Ewon SAM Code Tester Project (sc-ewon-java-sam-code-test)
 
-THE PROJECT IS PROVIDED "AS IS" WITHOUT WARRANTY OF ANY KIND. HMS DOES NOT WARRANT THAT THE FUNCTIONS OF THE PROJECT WILL MEET YOUR REQUIREMENTS, OR THAT THE OPERATION OF THE PROJECT WILL BE UNINTERRUPTED OR ERROR-FREE, OR THAT DEFECTS IN IT CAN BE CORRECTED.
----
+Copyright © 2022 HMS Industrial Networks Inc.
 
-## [Table of Contents](#table-of-contents)
+The Solution Center Ewon SAM Code Tester Project is a simple Ewon Flexy utility application for 
+testing the resulting response codes from the Ewon SAM (Scheduled Action Manager) for each valid 
+HTTP response/result code.
 
-1. [Description](#description)
-   1. [Required Maven and Java Version](#required-maven-and-java-version)
-   2. [Required Firmware Version](#required-firmware-version)
-   3. [Libraries and Dependencies](#libraries-and-dependencies)
-      1. [Solution Center Repository](#solution-center-repository)
-2. [Development Environment](#development-environment)
-   1. [Getting Project Name and Version via Maven](#getting-project-name-and-version-via-maven)
-   2. [Testing with JUnit](#testing-with-junit)
-   3. [IDEs](#ides)
-   4. [Command-Line](#command-line)
-   5. [Support Notice](#support-notice)
-3. [Development Lifecycles](#development-lifecycles)
-   1. [Clean Lifecycle](#clean-lifecycle)
-   2. [Package Lifecycle](#package-lifecycle)
-   3. [Install Lifecycle](#install-lifecycle)
-   4. [Deploy Lifecycle](#deploy-lifecycle)
-      1. [Deploy Lifecycle (noDebug)](#deploy-lifecycle-nodebug)
-      2. [Deploy Lifecycle (debug)](#deploy-lifecycle-debug)
-4. [Contributing](#contributing)
+THE PROJECT IS PROVIDED "AS IS" WITHOUT WARRANTY OF ANY KIND. HMS DOES NOT WARRANT THAT THE 
+FUNCTIONS OF THE PROJECT WILL MEET YOUR REQUIREMENTS, OR THAT THE OPERATION OF THE PROJECT WILL BE 
+UNINTERRUPTED OR ERROR-FREE, OR THAT DEFECTS IN IT CAN BE CORRECTED.
 
----
+## Table of contents
 
-## [Description](#table-of-contents)
+- [Installation](#installation)
+   - [Required Ewon Firmware Version](#required-ewon-firmware-version)
+   - [Network Requirements](#network-requirements)
+- [Development Environment](#development-environment)
+   - [Libraries and Dependencies](#libraries-and-dependencies)
+   - [Source Code](#source-code)
+      - [Cloning](#cloning)
+      - [Existing Thread.sleep() Invocations](#existing-threadsleep-invocations)
+   - [Javadocs](#javadocs)
+   - [Releases](#releases)
+      - [Automatic Startup (jvmrun)](#automatic-startup-jvmrun)
+   - [Contributing](#contributing)
+- [Support](#support)
+   - [Reporting Bugs and Issues](#reporting-bugs-and-issues)
+   - [Flexy Support](#flexy-support)
+   - [Development Environment Support](#development-environment-support)
 
-A basic starting project for Java applications developed on the Ewon JTK using Maven. 
+## Installation
 
-This project is intended to replace the functionality provided by the Ewon JTK's `build.xml` Ant build file for projects.
+Installation of the Solution Center Ewon SAM Code Tester Project package is simple, and only 
+requires the upload of a handful of files to the Ewon device. 
 
-### [Required Maven and Java Version](#table-of-contents)
+### Required Ewon Firmware Version
 
-This project has been designed to work with the latest versions of Maven and Java. There is no specific version of Maven or Java required, although testing has been successfully completed on a host using Java 16 and Maven 3.6.3. 
+This project requires a minimum Ewon firmware version of 14.5 or higher. Older firmware versions may
+be incompatible and are not supported.
 
-During the Maven [package lifecycle](#package-lifecycle), a compatible JDK will be automatically downloaded and used to compile the source code. This allows for better cross-platform developer support, compilation consistency, and enables the use of modern Java and Maven environments on the host by isolating source code compilation.
+### Network Requirements
 
-### [Required Firmware Version](#table-of-contents)
+By default, this project connects to an HTTP test server over ports 8080 and 8443. Ports 8080 and 
+8443 must be permitted on the connected Ewon network(s).
 
-This project requires a minimum Ewon firmware version of 14.0 or higher. Older firmware versions may be incompatible and are not supported.
+## Development Environment
 
-### [Libraries and Dependencies](#table-of-contents)
+This project is based on
+the [Solution Center Maven Starter Project](https://github.com/hms-networks/sc-java-maven-starter-project)
+, and uses the Maven build system for compilation, testing, and packaging.
 
-This project itself does not require any libraries or dependencies. For your convenience, the Ewon ETK is already included as a dependency though. 
+Maven lifecycle information and other details about the development environment provided by
+the [Solution Center Maven Starter Project](https://github.com/hms-networks/sc-java-maven-starter-project)
+can be found in its README.md
+at [https://github.com/hms-networks/sc-java-maven-starter-project/blob/main/README.md](https://github.com/hms-networks/sc-java-maven-starter-project/blob/main/README.md)
+.
 
-If you removed the Ewon JTK dependency, or otherwise need to re-add it, you can include it by adding the `<dependency></dependency>` block in the `<dependencies></dependencies>` section of your `pom.xml` as follows:
-```xml
-<dependencies>
-   ...
-   <dependency>
-      <groupId>com.hms_networks.americas.sc.mvnlibs</groupId>
-      <artifactId>ewon-etk</artifactId>
-      <version>1.4.4</version>
-      <scope>provided</scope>
-   </dependency>
-   ...
-</dependencies>
-```
-_Note: The scope must be set to 'provided' for the Ewon ETK. This indicates the the library is provided by the system and does not need to be included in the packaged JAR file._
+### Libraries and Dependencies
 
-As required, you can include additional libraries or dependencies using the Maven build system. To add a new library or dependency, add a new `<dependency></dependency>` block in the `<dependencies></dependencies>` section of your `pom.xml`. For example,
+The following libraries and dependencies are required for this project to run:
 
-```xml
-<dependencies>
-   ...
-   <dependency>
-      <groupId>commons-lang</groupId>
-      <artifactId>commons-lang</artifactId>
-      <version>2.6</version>
-   </dependency>
-   ...
-</dependencies>
-```
+1. Ewon ETK
+   ```xml
+   <dependencies>
+      ...
+      <dependency>
+         <groupId>com.hms_networks.americas.sc.mvnlibs</groupId>
+         <artifactId>ewon-etk</artifactId>
+         <version>X.Y.Z</version>
+         <scope>provided</scope>
+      </dependency>
+      ...
+   </dependencies>
+   ```
+   _Note: The scope must be set to 'provided' for the Ewon ETK dependency. This indicates that the
+   library is provided by the system and does not need to be included in the packaged JAR file._
+2. JUnit
+   ```xml
+   <dependencies>
+      ...
+      <dependency>
+         <groupId>junit</groupId>
+         <artifactId>junit</artifactId>
+         <version>X.Y.Z</version>
+         <scope>test</scope>
+      </dependency>
+      ...
+   </dependencies>
+   ```
+   _Note: The scope must be set to 'test' for the JUnit dependency. This indicates that the library
+   is required for code testing and does not need to be included in the packaged JAR file._
+3. Ewon Flexy Extensions Library
+   ```xml
+   <dependencies>
+      ...
+      <dependency>
+         <groupId>com.hms_networks.americas.sc</groupId>
+         <artifactId>extensions</artifactId>
+         <version>X.Y.Z</version>
+      </dependency>
+      ...
+   </dependencies>
+   ```
 
-Adding dependencies may introduce warnings or errors during the Maven build process which are unable to be addressed in this project. These warnings and errors can typically be ignored. 
+As required, you can include additional libraries or dependencies using the Maven build system. To
+add a new library or dependency, add a new `<dependency></dependency>` block in
+the `<dependencies></dependencies>` section of your `pom.xml`.
 
-For dependencies with errors in Javadoc documentation, you can omit the dependency's Javadoc documentation by adding a corresponding `<dependencySourceExclude></dependencySourceExclude>` to the `org.apache.maven.plugins:maven-javadoc-plugin` `<plugin></plugin>` section of your `pom.xml`.
+### Source Code
 
-For example, to exclude the Javadoc documentation for the `commons-lang:commons-lang` dependency, add the following to the `org.apache.maven.plugins:maven-javadoc-plugin` `<plugin></plugin>` section of your `pom.xml`:
+Source code and IDE project files for the Ewon SAM Code Tester Project are made available in the 
+[hms-networks/sc-ewon-java-sam-code-test](https://github.com/hms-networks/sc-ewon-java-sam-code-test)
+repository on GitHub. They are also included in release(.zip) files.
 
-```xml
-<dependencySourceExclude>commons-lang:commons-lang:*</dependencySourceExclude>
-```
+#### Cloning
 
-A sample `org.apache.maven.plugins:maven-javadoc-plugin` `<plugin></plugin>` section of the `pom.xml` with the `commons-lang` dependency excluded is shown below:
+The source code can be downloaded using Git clone. For more information about the Git clone command,
+please refer to the GitHub clone documentation
+at [https://docs.github.com/en/github/creating-cloning-and-archiving-repositories/cloning-a-repository](https://docs.github.com/en/github/creating-cloning-and-archiving-repositories/cloning-a-repository)
+.
 
-```xml
-<plugin>
-   <groupId>org.apache.maven.plugins</groupId>
-   <artifactId>maven-javadoc-plugin</artifactId>
-   <version>...</version>
-   <configuration>
-      <javadocExecutable>${build.jdk.path}${file.separator}bin${file.separator}javadoc
-      </javadocExecutable>
-      <finalName>${project.artifactId}-${project.version}</finalName>
-      <show>private</show>
-      <includeDependencySources>true</includeDependencySources>
-      <dependencySourceExcludes>
-         <dependencySourceExclude>com.hms_networks.americas.sc.mvnlibs:ewon-etk:*</dependencySourceExclude>
-         <dependencySourceExclude>commons-lang:commons-lang:*</dependencySourceExclude>
-      </dependencySourceExcludes>
-   </configuration>
-   <executions>
-      <execution>
-         <phase>package</phase>
-         <goals>
-            <goal>aggregate-jar</goal>
-         </goals>
-      </execution>
-   </executions>
-</plugin>
-```
+Using the git client of your choice, clone
+the https://github.com/hms-networks/sc-ewon-java-sam-code-test repository.
 
-#### [Solution Center Repository](#table-of-contents)
+Using HTTPS:
 
-The Ewon ETK and HMS Americas Solution Center libraries are available via the solution center repository. For your convenience, the solution center repository is already included though.
-
-If you removed the solution center repository, or otherwise need to re-add it, you can include it by adding the following `<repository></repository>` block in the `<repositories></repositories>` section of your `pom.xml` as follows:
-```xml
-<repositories>
-   ...
-   <!-- HMS Networks, MU Americas Solution Center Maven Repo -->
-   <repository>
-      <id>sc-java-maven-repo</id>
-      <name>HMS Networks, MU Americas Solution Center Maven Repo</name>
-      <url>https://github.com/hms-networks/sc-java-maven-repo/raw/main/</url>
-   </repository>
-   ...
-</repositories>
+```console
+> git clone https://github.com/hms-networks/sc-ewon-java-sam-code-test.git --recursive
 ```
 
-## [Development Environment](#table-of-contents)
+Using SSH:
 
-This project uses the Maven build system to automatically download libraries and dependencies, and to ensure consistent build behavior.
-
-### [Getting Project Name and Version via Maven](#table-of-contents)
-
-This project includes additional metadata in the JAR file manifest, including the project's name and version from `pom.xml`.
-
-To alleviate the requirement for including a hardcoded project name or version in source code, you can access those properties as described:
-
-```java
-String projectName = ExampleMain.class.getPackage().getImplementationTitle();
-String projectVersion = ExampleMain.class.getPackage().getImplementationVersion();
+```console
+> git clone git@github.com:hms-networks/sc-ewon-java-sam-code-test.git --recursive
 ```
 
-_Note: The required metadata is only included when the project is packaged via Maven. If you package the project using the `build.xml` Ant build file, the described method of accessing the project name and version may not work or could cause an exception._
+#### Existing Thread.sleep() Invocations
 
-### [Testing with JUnit](#table-of-contents)
+In many locations throughout the application, calls are made to Thread.sleep(). These calls are
+necessary to signal to the JVM and the Ewon Flexy that other processes can be serviced. Reducing or
+removing these calls to Thread.sleep() may cause stability issues with the Flexy. This behavior may
+manifest as a device reboot.
 
-This project includes basic support for unit testing via the JUnit 3.8.1 test framework. An example test class has been included in this project at `src/test/java/ExampleTest.java`. For detailed information about JUnit 3.8.1 and its capabilities, please refer to [http://junit.sourceforge.net/junit3.8.1/](http://junit.sourceforge.net/junit3.8.1/).
+### Javadocs
 
-For details about the unit testing in this project, refer to the [test lifecycle](#test-lifecycle) section.
+Developer documentation is available in Javadoc jar format in /target folder of release packages. A
+generated copy can also be found in the /target/apidocs folder after compiling with Maven.
 
-### [IDEs](#table-of-contents)
+### Releases
 
-Support for the following IDEs has been included for this project:
+To release a compiled version of the Ewon SAM Code Tester Project, two files must be supplied to
+the end-user, the compiled Ewon SAM Code Tester Project jar, and a jvmrun file. The files should
+be installed to the /usr directory of the Ewon Flexy. On the first run of the application, a default
+application configuration will be written to the Ewon’s filesystem. This can be modified to include
+the desired configuration, as outlined under the [Configuration](#configuration) heading.
 
-|                             IDE                            | General Config Location(s) |  Launch Config Location(s) |                                                                                                                                                                                   Notes                                                                                                                                                                                  |
-|:----------------------------------------------------------:|:--------------------------:|:--------------------------:|:------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------:|
-|     [Eclipse Foundation IDE](https://www.eclipse.org/)     |  '.project', '.classpath'  | '.eclipse-launch-configs/' |                                                                                                                                                                                   None                                                                                                                                                                                   |
-| [JetBrains IntelliJ IDEA](https://www.jetbrains.com/idea/) |          '.idea/'          | '.idea/runConfigurations/' | The remote debug configuration does not wake  the Ewon debug session from the suspend state. Workaround: Update the remote debug configuration  to use the 'debugNoSuspend' profile. The Ewon will  begin its debug session immediately, therefore,  breakpoints at the beginning of the application  execution may be missed prior to the IDE debug session connecting. |
-|     [Visual Studio Code](https://code.visualstudio.com)    |         '.vscode/'         |    '.vscode/tasks.json'    |                                                                   No support has been included for remote debugging of applications on the Ewon. If desired, a remote JVM debugging session will need to be created as described in the [Deploy Lifecycle (debug)] ( #deploy-lifecycle-debug) section.                                                                   |
+Official releases of the Ewon SAM Code Tester Project can be found and downloaded
+from [https://github.com/hms-networks/sc-ewon-java-sam-code-test/releases](https://github.com/hms-networks/sc-ewon-java-sam-code-test/releases)
+.
 
-Note: Additional IDEs with support for the Maven build system may be supported by this project, but have not been tested.
+#### Automatic Startup (jvmrun)
 
-### [Command-Line](#table-of-contents)
+On startup, the Ewon Flexy will look for the presence of a jvmrun file. If present, the Ewon Flexy
+will automatically launch the application referenced in the jvmrun script with the configured
+settings.
 
-Maven includes extensive support for the command-line interface (CLI). For more information about Maven command-line interface support, please refer to [https://maven.apache.org/run.html](https://maven.apache.org/run.html).
+The jvmrun script, included in the /scripts folder, configures the Ewon SAM Code Tester Project to 
+run with a 25 MB heap. If the heap size is reduced in the jvmrun script, the application may become 
+unstable and could crash if unable to allocate memory.
 
-### [Support Notice](#table-of-contents)
+### Contributing
 
-While this project is intended to replace the functionality provided by the Ewon JTK's `build.xml` Ant build file, the Ewon-supplied `build.xml` Ant build file remains the only supported environment for Ewon Java development. For more information about the official Ewon-supplied `build.xml` Ant build file, please refer to [https://developer.ewon.biz/content/java-0](https://developer.ewon.biz/content/java-0).
+Detailed information about contributing to this project can be found
+in [CONTRIBUTING.md](CONTRIBUTING.md).
 
-This project does not interact with the `build.xml` Ant build file, or the Ant build system entirely, therefore, it is possible to use the official Ewon-supplied `build.xml` Ant build file in conjunction with the supplied `pom.xml` Maven build file. 
+## Support
 
-## [Development Lifecycles](#table-of-contents)
+### Reporting Bugs and Issues
 
-The supplied `pom.xml` Maven build file includes support for automatically downloading a supported JDK and compiling for the Ewon Flexy ETK version. Additionally, Maven profiles have been included which fully enable remote application debugging on the Ewon Flexy.
+If you encounter a bug or issue in the Ewon SAM Code Tester Project, please open an issue on the
+GitHub repository issues page, found
+at [https://github.com/hms-networks/sc-ewon-java-sam-code-test/issues](https://github.com/hms-networks/sc-ewon-java-sam-code-test/issues)
+.
 
-### [Clean Lifecycle](#table-of-contents)
+### Flexy Support
 
-The Maven clean lifecycle can be run with the `CLEAN (Remove Build Output)` launch configuration in your IDE, or with the following command: `mvn clean -f pom.xml`.
+Support and additional information about the Ewon Flexy can be found on the Ewon support homepage
+at [https://ewon.biz/technical-support/support-home](https://ewon.biz/technical-support/support-home)
+.
 
-During this lifecycle, previous build output and artifacts will be cleaned up, and the entire build output directory deleted. 
+### Development Environment Support
 
-This lifecycle is not automatically invoked and must be manually run.
+Detailed information about the development environment provided by
+the [Solution Center Maven Starter Project](https://github.com/hms-networks/sc-java-maven-starter-project)
+can be found in its README.md
+at [https://github.com/hms-networks/sc-java-maven-starter-project/blob/main/README.md](https://github.com/hms-networks/sc-java-maven-starter-project/blob/main/README.md)
+.
 
-### [Test Lifecycle](#table-of-contents)
-
-The Maven test lifecycle can be run with the `TEST (Run JUnit)` launch configuration in your IDE, or with the following command: `mvn test -f pom.xml`.
-
-During this lifecycle, the JUnit test classes in the `src/test/java` class will be run by Maven. In the event of a test failure, the lifecycle will fail. Detailed failure or successful test information can be found in the `target/surefire-reports` folder.
-
-Detailed information about the Maven Surefure Plugin, which is automatically used for JUnit testing, can be found at [https://maven.apache.org/surefire/maven-surefire-plugin/](https://maven.apache.org/surefire/maven-surefire-plugin/).
-
-This lifecycle is automatically invoked by the [package](#package-lifecycle), [install](#install-lifecycle), and [deploy](#deploy-lifecycle) lifecycles.
-
-### [Package Lifecycle](#table-of-contents)
-
-The Maven package lifecycle can be run with the `PACKAGE (Create JAR)` launch configuration in your IDE, or with the following command: `mvn package -f pom.xml`.
-
-During this lifecycle, the application source code and resources will be compiled and packaged in to a JAR file with the name '{artifactId}-{version}-full.jar'. 
-
-This lifecycle is automatically invoked by the [install](#install-lifecycle) and [deploy](#deploy-lifecycle) lifecycles.
-
-### [Install Lifecycle](#table-of-contents)
-
-The Maven install lifecycle can be run with the `INSTALL (Upload to Device)` launch configuration in your IDE, or with the following command: `mvn install -f pom.xml`.
-
-During this lifecycle, the packaged application will be uploaded to the Ewon device using the 'ewon.address,' 'ewon.username,' and 'ewon.password' properties. 
-
-This lifecycle is automatically invoked by the [deploy](#deploy-lifecycle) lifecycle, and automatically invokes [package lifecycle](#package-lifecycle).
-
-### [Deploy Lifecycle](#table-of-contents)
-
-The Maven deploy lifecycle supports multiple Maven profiles, and can be invoked in different ways.
-
-During this lifecycle, the packaged and uploaded application will be run on the Ewon Flexy device. 
-
-This lifecycle automatically invokes [install](#install-lifecycle) and [package](#package-lifecycle) lifecycles.
-
-#### [Deploy Lifecycle (noDebug)](#table-of-contents)
-
-The Maven deploy lifecycle can be run without debugging enabled using the `DEPLOY (Run on Device, No Debug)` launch configuration in your IDE, or with the following command: `mvn deploy -f pom.xml -P noDebug`.
-
-#### [Deploy Lifecycle (debug)](#table-of-contents)
-
-The Maven deploy lifecycle can be run with debugging enabled using the `DEPLOY (Run on Device, Debug)` launch configuration in your IDE. 
-
-The Maven deploy lifecycle with debugging enabled can also be run with the following command: `mvn deploy -f pom.xml -P debug`, but a remote JVM debugging connection must be manually created using the values from the 'ewon.address' and 'project.build.debug.port' properties.
-
-## [Contributing](#table-of-contents)
-
-Detailed information about contributing to this project can be found in [CONTRIBUTING.md](CONTRIBUTING.md).
+Additional information and support about the Ewon ETK can be found on the Ewon Java programming
+homepage at [https://developer.ewon.biz/content/java-0](https://developer.ewon.biz/content/java-0).
